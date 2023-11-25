@@ -1,14 +1,34 @@
-from typing import Optional
-
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from tweety import generate_sde_tweet, generate_tweet_hashtags, validate_prompt
 
 app = FastAPI()
 
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Hello from tweety"}
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+
+@app.get("/generate-tweet")
+async def generate_tweet(prompt: str):
+    validate_prompt_api(prompt=prompt)
+    result = generate_sde_tweet(prompt=prompt)
+    tweet = result["answer"]
+    return {"tweet": tweet}
+
+@app.get("/generate-hashtags")
+async def generate_hashtags(prompt: str):
+    validate_prompt_api(prompt=prompt)
+    result = generate_tweet_hashtags(prompt=prompt)
+    hashtags = result["answer"]
+    return {"hashtags": hashtags}
+
+def validate_prompt_api(prompt):
+    try:
+        if validate_prompt(prompt=prompt) is False:
+            raise ValueError("Too long prompt length, keep it to 32 characters or less")
+    except ValueError as httperror:
+        raise HTTPException(status_code=400, detail=str(httperror))
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

@@ -1,4 +1,8 @@
-# Deploy FastAPI on Render
+# Tweety API AI Tweet Generator App
+
+This is the backend fastapi service deployed on [render](https://render.com) for the frontend tweety nextjs react app client which is an AI tweet generator API app for software engineers.
+
+## Deploy FastAPI on Render
 
 Use this repo as a template to deploy a Python [FastAPI](https://fastapi.tiangolo.com) service on Render.
 
